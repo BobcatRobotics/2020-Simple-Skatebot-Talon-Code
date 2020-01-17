@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private WPI_TalonSRX leftTalon = new WPI_TalonSRX(7);
   private WPI_TalonSRX rightTalon = new WPI_TalonSRX(8);
-  private WPI_TalonFX testFalcon = new WPI_TalonFX(0);
+  //private WPI_TalonFX testFalcon = new WPI_TalonFX(0);
   //private WPI_TalonSRX pingPongTalon = new WPI_TalonSRX(8);
   private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftTalon, rightTalon);
   private final Joystick m_stick = new Joystick(0);
@@ -75,9 +75,9 @@ public class Robot extends TimedRobot {
       rightTalon.setSelectedSensorPosition(0,0,0);
       rightTalon.setSensorPhase(false);
 
-      testFalcon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0,0);
+      /*testFalcon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0,0);
       testFalcon.setSelectedSensorPosition(0,0,0);
-      testFalcon.setSensorPhase(false);
+      testFalcon.setSensorPhase(false);*/
   }
 
   /**
@@ -115,10 +115,10 @@ public class Robot extends TimedRobot {
     // Read right bumper, if pressed pass right stick to talonFX.
     boolean test_falcon_pressed = m_stick.getRawButton(6);
     if (test_falcon_pressed) {
-      testFalcon.set(ControlMode.PercentOutput, rightStick);
+      //testFalcon.set(ControlMode.PercentOutput, rightStick);
       m_robotDrive.tankDrive(0.0, 0.0);
     } else {
-      testFalcon.set(ControlMode.PercentOutput, 0.0);
+      //testFalcon.set(ControlMode.PercentOutput, 0.0);
       m_robotDrive.tankDrive(leftStick, rightStick);
     }
 
@@ -188,8 +188,8 @@ public class Robot extends TimedRobot {
     rightDistance = rightTalon.getSelectedSensorPosition(0);
     leftVelocity = leftTalon.getSelectedSensorVelocity(0);
     rightVelocity = rightTalon.getSelectedSensorVelocity(0);
-    testFalconDistance = testFalcon.getSelectedSensorPosition(0);
-    testFalconVelocity = testFalcon.getSelectedSensorVelocity(0);
+    //testFalconDistance = testFalcon.getSelectedSensorPosition(0);
+    //testFalconVelocity = testFalcon.getSelectedSensorVelocity(0);
     SmartDashboard.putNumber("left distance:", leftDistance);
     SmartDashboard.putNumber("left velocity:", leftVelocity);
     SmartDashboard.putNumber("right distance:", rightDistance);
