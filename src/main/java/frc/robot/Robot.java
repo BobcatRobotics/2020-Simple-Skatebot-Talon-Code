@@ -39,6 +39,8 @@ public class Robot extends TimedRobot {
   private WPI_TalonSRX leftTalon = new WPI_TalonSRX(7);
   private WPI_TalonSRX rightTalon = new WPI_TalonSRX(8);
   //private WPI_TalonFX testFalcon = new WPI_TalonFX(0);
+  private WPI_TalonFX shooterFalcon1 = new WPI_TalonFX(13);
+  private WPI_TalonFX shooterFalcon2 = new WPI_TalonFX(14);
   //private WPI_TalonSRX pingPongTalon = new WPI_TalonSRX(8);
   private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftTalon, rightTalon);
   private final Joystick m_stick = new Joystick(0);
@@ -51,6 +53,10 @@ public class Robot extends TimedRobot {
   private double rightVelocity = 0.0;
   private double testFalconDistance = 0.0;
   private double testFalconVelocity = 0.0;
+  private double shooterFalcon1Distance = 0.0;
+  private double shooterFalcon1Velocity = 0.0;
+  private double shooterFalcon2Distance = 0.0;
+  private double shooterFalcon2Velocity = 0.0;
 
   private AHRS ahrs = new AHRS(SPI.Port.kMXP);
 
@@ -75,9 +81,14 @@ public class Robot extends TimedRobot {
       rightTalon.setSelectedSensorPosition(0,0,0);
       rightTalon.setSensorPhase(false);
 
-      /*testFalcon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0,0);
-      testFalcon.setSelectedSensorPosition(0,0,0);
-      testFalcon.setSensorPhase(false);*/
+      //testFalcon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0,0);
+      //testFalcon.setSelectedSensorPosition(0,0,0);
+      shooterFalcon1.setSensorPhase(false);
+      shooterFalcon1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0,0);
+      shooterFalcon1.setSelectedSensorPosition(0,0,0);
+      shooterFalcon2.setSensorPhase(false);
+      shooterFalcon2.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,0,0);
+      shooterFalcon2.setSelectedSensorPosition(0,0,0);
   }
 
   /**
@@ -116,9 +127,13 @@ public class Robot extends TimedRobot {
     boolean test_falcon_pressed = m_stick.getRawButton(6);
     if (test_falcon_pressed) {
       //testFalcon.set(ControlMode.PercentOutput, rightStick);
+      shooterFalcon1.set(ControlMode.PercentOutput, leftStick);
+      shooterFalcon2.set(ControlMode.PercentOutput, rightStick);
       m_robotDrive.tankDrive(0.0, 0.0);
     } else {
       //testFalcon.set(ControlMode.PercentOutput, 0.0);
+      shooterFalcon1.set(ControlMode.PercentOutput, 0.0);
+      shooterFalcon2.set(ControlMode.PercentOutput, 0.0);
       m_robotDrive.tankDrive(leftStick, rightStick);
     }
 
@@ -190,12 +205,20 @@ public class Robot extends TimedRobot {
     rightVelocity = rightTalon.getSelectedSensorVelocity(0);
     //testFalconDistance = testFalcon.getSelectedSensorPosition(0);
     //testFalconVelocity = testFalcon.getSelectedSensorVelocity(0);
+    shooterFalcon1Distance = shooterFalcon1.getSelectedSensorPosition(0);
+    shooterFalcon1Velocity = shooterFalcon1.getSelectedSensorVelocity(0);
+    shooterFalcon2Distance = shooterFalcon2.getSelectedSensorPosition(0);
+    shooterFalcon2Velocity = shooterFalcon2.getSelectedSensorVelocity(0);
     SmartDashboard.putNumber("left distance:", leftDistance);
     SmartDashboard.putNumber("left velocity:", leftVelocity);
     SmartDashboard.putNumber("right distance:", rightDistance);
     SmartDashboard.putNumber("right velocity:", rightVelocity);
     SmartDashboard.putNumber("testFalcon distance:", testFalconDistance);
     SmartDashboard.putNumber("testFalcon velocity:", testFalconVelocity);
+    SmartDashboard.putNumber("shooterFalcon1 distance:", shooterFalcon1Distance);
+    SmartDashboard.putNumber("shooterFalcon1 velocity:", shooterFalcon1Velocity);
+    SmartDashboard.putNumber("shooterFalcon2 distance:", shooterFalcon2Distance);
+    SmartDashboard.putNumber("shooterFalcon2 velocity:", shooterFalcon2Velocity);
   }
 
   public void readNavxAndShowValues() {
@@ -203,29 +226,29 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("IMU_Connected", ahrs.isConnected());
     SmartDashboard.putBoolean("IMU_IsCalibrating", ahrs.isCalibrating());
     SmartDashboard.putNumber("IMU_Yaw", ahrs.getYaw());
-    SmartDashboard.putNumber("IMU_Pitch", ahrs.getPitch());
-    SmartDashboard.putNumber("IMU_Roll", ahrs.getRoll());
+    //SmartDashboard.putNumber("IMU_Pitch", ahrs.getPitch());
+    //SmartDashboard.putNumber("IMU_Roll", ahrs.getRoll());
 
     /* Display tilt-corrected, Magnetometer-based heading (requires */
     /* magnetometer calibration to be useful) */
 
-    SmartDashboard.putNumber("IMU_CompassHeading", ahrs.getCompassHeading());
+    //SmartDashboard.putNumber("IMU_CompassHeading", ahrs.getCompassHeading());
 
     /* Display 9-axis Heading (requires magnetometer calibration to be useful) */
-    SmartDashboard.putNumber("IMU_FusedHeading", ahrs.getFusedHeading());
+    //SmartDashboard.putNumber("IMU_FusedHeading", ahrs.getFusedHeading());
 
     /* These functions are compatible w/the WPI Gyro Class, providing a simple */
     /* path for upgrading from the Kit-of-Parts gyro to the navx MXP */
 
     SmartDashboard.putNumber("IMU_TotalYaw", ahrs.getAngle());
-    SmartDashboard.putNumber("IMU_YawRateDPS", ahrs.getRate());
+    //SmartDashboard.putNumber("IMU_YawRateDPS", ahrs.getRate());
 
     /* Display Processed Acceleration Data (Linear Acceleration, Motion Detect) */
 
-    SmartDashboard.putNumber("IMU_Accel_X", ahrs.getWorldLinearAccelX());
-    SmartDashboard.putNumber("IMU_Accel_Y", ahrs.getWorldLinearAccelY());
-    SmartDashboard.putBoolean("IMU_IsMoving", ahrs.isMoving());
-    SmartDashboard.putBoolean("IMU_IsRotating", ahrs.isRotating());
+    //SmartDashboard.putNumber("IMU_Accel_X", ahrs.getWorldLinearAccelX());
+    //SmartDashboard.putNumber("IMU_Accel_Y", ahrs.getWorldLinearAccelY());
+    //SmartDashboard.putBoolean("IMU_IsMoving", ahrs.isMoving());
+    //SmartDashboard.putBoolean("IMU_IsRotating", ahrs.isRotating());
 
     /* Display estimates of velocity/displacement. Note that these values are */
     /* not expected to be accurate enough for estimating robot position on a */
@@ -233,45 +256,45 @@ public class Robot extends TimedRobot {
     /* of these errors due to single (velocity) integration and especially */
     /* double (displacement) integration. */
 
-    SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
-    SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
-    SmartDashboard.putNumber("Displacement_X", ahrs.getDisplacementX());
-    SmartDashboard.putNumber("Displacement_Y", ahrs.getDisplacementY());
+    //SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
+    //SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
+    //SmartDashboard.putNumber("Displacement_X", ahrs.getDisplacementX());
+    //SmartDashboard.putNumber("Displacement_Y", ahrs.getDisplacementY());
 
     /* Display Raw Gyro/Accelerometer/Magnetometer Values */
     /* NOTE: These values are not normally necessary, but are made available */
     /* for advanced users. Before using this data, please consider whether */
     /* the processed data (see above) will suit your needs. */
 
-    SmartDashboard.putNumber("RawGyro_X", ahrs.getRawGyroX());
-    SmartDashboard.putNumber("RawGyro_Y", ahrs.getRawGyroY());
-    SmartDashboard.putNumber("RawGyro_Z", ahrs.getRawGyroZ());
-    SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
-    SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
-    SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
-    SmartDashboard.putNumber("RawMag_X", ahrs.getRawMagX());
-    SmartDashboard.putNumber("RawMag_Y", ahrs.getRawMagY());
-    SmartDashboard.putNumber("RawMag_Z", ahrs.getRawMagZ());
-    SmartDashboard.putNumber("IMU_Temp_C", ahrs.getTempC());
-    SmartDashboard.putNumber("IMU_Timestamp", ahrs.getLastSensorTimestamp());
+    //SmartDashboard.putNumber("RawGyro_X", ahrs.getRawGyroX());
+    //SmartDashboard.putNumber("RawGyro_Y", ahrs.getRawGyroY());
+    //SmartDashboard.putNumber("RawGyro_Z", ahrs.getRawGyroZ());
+    //SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
+    //SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
+    //SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
+    //SmartDashboard.putNumber("RawMag_X", ahrs.getRawMagX());
+    //SmartDashboard.putNumber("RawMag_Y", ahrs.getRawMagY());
+    //SmartDashboard.putNumber("RawMag_Z", ahrs.getRawMagZ());
+    //SmartDashboard.putNumber("IMU_Temp_C", ahrs.getTempC());
+    //SmartDashboard.putNumber("IMU_Timestamp", ahrs.getLastSensorTimestamp());
 
     /* Omnimount Yaw Axis Information */
     /* For more info, see http://navx-mxp.kauailabs.com/installation/omnimount */
-    AHRS.BoardYawAxis yaw_axis = ahrs.getBoardYawAxis();
-    SmartDashboard.putString("YawAxisDirection", yaw_axis.up ? "Up" : "Down");
-    SmartDashboard.putNumber("YawAxis", yaw_axis.board_axis.getValue());
+    //AHRS.BoardYawAxis yaw_axis = ahrs.getBoardYawAxis();
+    //SmartDashboard.putString("YawAxisDirection", yaw_axis.up ? "Up" : "Down");
+    //SmartDashboard.putNumber("YawAxis", yaw_axis.board_axis.getValue());
 
     /* Sensor Board Information */
-    SmartDashboard.putString("FirmwareVersion", ahrs.getFirmwareVersion());
+    //SmartDashboard.putString("FirmwareVersion", ahrs.getFirmwareVersion());
 
     /* Quaternion Data */
     /* Quaternions are fascinating, and are the most compact representation of */
     /* orientation data. All of the Yaw, Pitch and Roll Values can be derived */
     /* from the Quaternions. If interested in motion processing, knowledge of */
     /* Quaternions is highly recommended. */
-    SmartDashboard.putNumber("QuaternionW", ahrs.getQuaternionW());
-    SmartDashboard.putNumber("QuaternionX", ahrs.getQuaternionX());
-    SmartDashboard.putNumber("QuaternionY", ahrs.getQuaternionY());
-    SmartDashboard.putNumber("QuaternionZ", ahrs.getQuaternionZ());    
+    //SmartDashboard.putNumber("QuaternionW", ahrs.getQuaternionW());
+    //SmartDashboard.putNumber("QuaternionX", ahrs.getQuaternionX());
+    //SmartDashboard.putNumber("QuaternionY", ahrs.getQuaternionY());
+    //SmartDashboard.putNumber("QuaternionZ", ahrs.getQuaternionZ());    
   }
 }
