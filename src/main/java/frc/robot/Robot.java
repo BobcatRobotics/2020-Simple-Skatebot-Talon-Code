@@ -75,6 +75,9 @@ public class Robot extends TimedRobot {
   private double turretKp = 0.03; // Initial guess, 0.03 ~ 1.0PctOutput/30degrees
   private double minTurretCmd = 0.06;  // Min cmd to make turret move at all
   private double turretCmd;
+  private double turretCurrentOutput;
+  private double turretCurrentStator;
+  private SupplyCurrentLimitConfiguration turretLimiter= new SupplyCurrentLimitConfiguration (true, 1.0, 30.0, 0.2);
 
   /**
    * This function is run when the robot is first started up and should be
@@ -278,5 +281,20 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("turret_vel", turretVelocity);
     SmartDashboard.putNumber("tx", tx);
     SmartDashboard.putNumber("turretCmd", turretCmd);
+    turretCurrentOutput = turretMotor.getSupplyCurrent();
+    turretCurrentStator = turretMotor.getStatorCurrent();
+    SmartDashboard.putNumber("turretSupplyCurrent", turretCurrentOutput);
+    SmartDashboard.putNumber("turretStatorCurrent", turretCurrentStator);
+    /* Talon configured to have soft limits 10000 native units in either direction and enabled */
+   turretMotor.configForwardSoftLimitThreshold(10000, 0);
+   turretMotor.configReverseSoftLimitThreshold(-10000, 0);
+   turretMotor.configForwardSoftLimitEnable(true, 0);
+   turretMotor.configReverseSoftLimitEnable(true, 0);
+   //turretMotor.configPeakCurrentLimit(30); // don't activate current limit until current exceeds 30 A ...
+   //turretMotor.configPeakCurrentDuration(100); // ... for at least 100 ms
+   //turretMotor.configContinuousCurrentLimit(1); // once current-limiting is actived, hold at 20A
+   turretMotor.configSupplyCurrentLimit(turretLimiter);
+   //turretMotor.configStatorCurrentLimit(turretLimiter);
+   //turretMotor.enableCurrentLimit(true); 
   }
 }
